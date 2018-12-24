@@ -310,6 +310,7 @@ def save_checkpoint(model_state, file='default_checkpoint.pth'):
 model.class_to_idx = train_data.class_to_idx
 # 保存相关参数
 model_state = {
+    'arch':args.arch,
     'epoch': epochs,
     'state_dict': model.state_dict(),
     'optimizer_dict': optimizer.state_dict(),

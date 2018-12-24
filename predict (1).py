@@ -60,7 +60,7 @@ def load_checkpoint(file='default_checkpoint.pth'):
     model_state = torch.load(file, map_location=lambda storage, loc: storage)
     
 #     根据上面设定的参数load
-    model = models.vgg16(pretrained=True)
+    model = models.__dict__[model_state['arch']](pretrained=True)
     model.classifier = model_state['classifier']
     model.load_state_dict(model_state['state_dict'])
     model.class_to_idx = model_state['class_to_idx']
@@ -97,8 +97,12 @@ def predict(image_path, model, topk=5):
     image = process_image(image_path)
     # cpu mode
     if args.gpu:
-        model.cuda()
-        image.cuda()
+        if torch.cuda.is_available():
+            model.cuda()
+            image.cuda()
+        else:
+            model.cpu()
+            print("当前系统不支持cuda，将采用cpu的形式")
     else:  
         model.cpu()
     
